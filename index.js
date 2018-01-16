@@ -41,6 +41,15 @@ function getSubImages(sub) {
 // ---------------------- INSERT CODE  HERE ---------------------------
 // This "images" Observable is a dummy. Replace it with a stream of each
 // image in the current sub which is navigated by the user.
+
+const subs = Observable.fromEvent(subSelect, "change")
+                        .map(ev => ev.target.value)
+
+subs.subscribe(data => alert(data))
+const nexts = Observable.fromEvent(nextButton, "click");
+
+const backs = Observable.fromEvent(backButton, "click")
+
 const images = Observable.of("https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg");
 
 images.subscribe({
