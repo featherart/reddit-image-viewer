@@ -68,6 +68,10 @@ const images =
         switch()).
       switch();
 
+const actions = Observable.merge(subs, nexts, backs);
+
+actions.subscribe(() => loading.style.visibility = "visible");
+
 images.subscribe({
   next(url) {
     // hide the loading image
@@ -104,6 +108,6 @@ function preloadImages(src) {
 // observable that notfies whenever a user performs an action,
 // like changing the sub or navigating the images
 //const actions = Observable.empty();
-const actions = Observable.merge(subs, nexts, backs);
-
-actions.subscribe(() => loading.style.visibility = "visible");
+// const actions = Observable.merge(subs, nexts, backs);
+//
+// actions.subscribe(() => loading.style.visibility = "visible");
