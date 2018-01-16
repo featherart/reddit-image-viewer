@@ -47,7 +47,6 @@ const subs = Observable.concat(
       Observable.fromEvent(subSelect, "change")
                        .map(ev => ev.target.value));
 
-//subs.subscribe(data => alert(data))
 const nexts = Observable.fromEvent(nextButton, "click");
 
 const backs = Observable.fromEvent(backButton, "click");
@@ -66,8 +65,8 @@ const images =
     map(sub =>
       getSubImages(sub).
         map(images => indices.map(index => images[index])).
-          switch()).
-        switch();
+        switch()).
+      switch();
 
 images.subscribe({
   next(url) {
@@ -83,14 +82,23 @@ images.subscribe({
 });
 
 // pre-load image to make sure we don't load broken ones
-const img = new Image(src);
-img.onload = function() {
+/*
+function preloadImages(src) {
+  debugger;
+  const img = new Image(src);
+  const success =
+    Observable.
+      fromEvent(img, "load").
+      map(() => src);
 
+  const failure =
+    Observable.
+      fromEvent(img, "error").
+      map(() => LOADING_ERROR_URL);
+
+  return Observable.merge(success, failure).take(1);
 }
-
-img.onerror = function() {
-
-}
+*/
 
 // This "actions" Observable is a placeholder. Replace it with an
 // observable that notfies whenever a user performs an action,
