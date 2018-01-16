@@ -42,15 +42,32 @@ function getSubImages(sub) {
 // This "images" Observable is a dummy. Replace it with a stream of each
 // image in the current sub which is navigated by the user.
 
-const subs = Observable.fromEvent(subSelect, "change")
-                        .map(ev => ev.target.value)
+const subs = Observable.concat(
+      Observable.of(subSelect.value),
+      Observable.fromEvent(subSelect, "change")
+                       .map(ev => ev.target.value));
 
-subs.subscribe(data => alert(data))
+//subs.subscribe(data => alert(data))
 const nexts = Observable.fromEvent(nextButton, "click");
 
-const backs = Observable.fromEvent(backButton, "click")
+const backs = Observable.fromEvent(backButton, "click");
 
-const images = Observable.of("https://upload.wikimedia.org/wikipedia/commons/3/36/Hopetoun_falls.jpg");
+const offsets = Observable.merge(
+  nexts.map(() => 1),
+  backs.map(() => -1));
+
+const indices =
+  Observable.concat(
+    Observable.of(0),
+    offsets.scan((acc, curr) => acc + curr, 0));
+
+const images =
+  subs.
+    map(sub =>
+      getSubImages(sub).
+        map(images => indices.map(index => images[index])).
+          switch()).
+        switch();
 
 images.subscribe({
   next(url) {
@@ -63,11 +80,22 @@ images.subscribe({
   error(e) {
     alert("I'm having trouble loading the images for that sub. Please wait a while, reload, and then try again later.")
   }
-})
+});
+
+// pre-load image to make sure we don't load broken ones
+const img = new Image(src);
+img.onload = function() {
+
+}
+
+img.onerror = function() {
+
+}
 
 // This "actions" Observable is a placeholder. Replace it with an
 // observable that notfies whenever a user performs an action,
 // like changing the sub or navigating the images
-const actions = Observable.empty();
+//const actions = Observable.empty();
+const actions = Observable.merge(subs, nexts, backs);
 
 actions.subscribe(() => loading.style.visibility = "visible");
