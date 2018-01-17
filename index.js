@@ -64,7 +64,12 @@ const images =
   subs.
     map(sub =>
       getSubImages(sub).
-        map(images => indices.map(index => images[index])).
+        map(images =>
+          indices.
+            filter(index => index >= 0 && index < images.length).
+            map(index => images[index])).
+        switch().
+        map(preloadImage).
         switch()).
       switch();
 
@@ -86,23 +91,25 @@ images.subscribe({
 });
 
 // pre-load image to make sure we don't load broken ones
-/*
-function preloadImages(src) {
-  debugger;
-  const img = new Image(src);
-  const success =
-    Observable.
-      fromEvent(img, "load").
-      map(() => src);
 
-  const failure =
-    Observable.
-      fromEvent(img, "error").
-      map(() => LOADING_ERROR_URL);
+function preloadImage(src) {
+  return Observable.defer(() => {
+    const img = new Image();
+    const success =
+      Observable.
+        fromEvent(img, "load").
+        map(() => src);
 
-  return Observable.merge(success, failure).take(1);
+    const failure =
+      Observable.
+        fromEvent(img, "error").
+        map(() => LOADING_ERROR_URL);
+
+    img.src = src;
+
+    return Observable.merge(success, failure);
+  });
 }
-*/
 
 // This "actions" Observable is a placeholder. Replace it with an
 // observable that notfies whenever a user performs an action,
